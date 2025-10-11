@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from models import db, Player, Todo, Monster
 from datetime import date
 
@@ -22,21 +22,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    player = Player.query.first()
-    monster = Monster.query.filter_by(date=date.today()).first()
-
-    if not monster:
-        monster = Monster(name="スライム", hp=0, date=date.today())
-        db.session.add(monster)
-        db.session.commit()
-
-    todos = Todo.query.filter_by(date=date.today()).all()
-
-    return jsonify({
-        "player": {"name": player.name, "level": player.level},
-        "monster": {"name": monster.name, "hp": monster.hp},
-        "todos": [{"title": t.title, "done": t.done, "attack": t.attack_power} for t in todos]
-    })
+    return render_template("todo.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
