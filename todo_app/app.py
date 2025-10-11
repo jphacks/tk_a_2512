@@ -27,10 +27,6 @@ def get_today_monster():
         monster = Monster(name="スライム")
         db.session.add(monster)
         db.session.commit()
-    # 今日のTodoの攻撃力合計でHPをセット
-    todos = Todo.query.filter_by(date=date.today()).all()
-    monster.hp = sum(t.attack_power for t in todos)
-    db.session.commit()
     return monster
 
 # --- main page ---
@@ -61,10 +57,12 @@ def create_todo():
         todo = Todo(title=title, difficulty=difficulty)
         todo.set_attack_power()  # 攻撃力を設定
         db.session.add(todo)
-        db.session.commit()
 
-        # モンスターHP更新
-        monster = get_today_monster()  # この関数でHP再計算される
+        # モンスターHPを作成済みなら増やす
+        monster = get_today_monster()
+        monster.hp += todo.attack_power  # Todo作成時にHPを増やす
+
+        db.session.commit()
 
         return jsonify({
             "status": "ok",
@@ -73,7 +71,6 @@ def create_todo():
         })
     return jsonify({"status": "error"}), 400
 
-
 # --- Todo完了処理 ---
 @app.route("/api/complete_todo/<int:todo_id>", methods=["POST"])
 def complete_todo(todo_id):
@@ -81,17 +78,19 @@ def complete_todo(todo_id):
     monster = get_today_monster()
     player = Player.query.first()
 
-    if todo and not todo.done:
-        todo.done = True
-        monster.hp = max(0, monster.hp - todo.attack_power)
+    if not todo or todo.done:
+        return jsonify({"status": "error", "message": "無効なタスク"}), 400
 
-        # モンスター撃破判定
+    todo.done = True
+    if monster:
+        monster.hp = max(0, monster.hp - todo.attack_power)  # 攻撃力分減少
         if monster.hp == 0:
             player.level += 1
 
-        db.session.commit()
+    db.session.commit()
 
     return jsonify({
+        "status": "ok",
         "todo_id": todo.id,
         "monster_hp": monster.hp,
         "player_level": player.level
