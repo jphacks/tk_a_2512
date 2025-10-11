@@ -107,3 +107,7 @@ input, select, button {
 button {
     cursor: pointer;
 }
+
+.hidden {
+    display: none;
+}
