@@ -24,7 +24,7 @@ with app.app_context():
 def get_today_monster():
     monster = Monster.query.filter_by(date=date.today()).first()
     if not monster:
-        monster = Monster(name="スライム")
+        monster = Monster(name="モンスター")
         db.session.add(monster)
         db.session.commit()
     return monster
