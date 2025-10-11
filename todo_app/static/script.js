@@ -1,22 +1,17 @@
-// script.js
+// static/script.js
 
 // ==== 初期データ ====
-let monsterHP = 100;  // 初期HP
+let monsterHP = 100;  
 let monsterMaxHP = 100;
 let isPenaltyActive = false;
 
-// ★追加: プレイヤーのステータス
+// プレイヤーのステータス
 let playerLevel = 1;
 let playerExp = 0;
-const EXP_TO_LEVEL_UP = 100; // 次のレベルに必要な経験値 (固定値とする)
-const EXP_PER_MONSTER = 50; // モンスター討伐時のボーナス経験値
+const EXP_TO_LEVEL_UP = 100; 
 
-const todos = [
-  // ★expRewardを追加
-  { title: "本を読む", attack: 10, expReward: 10, done: false, dueDate: "2025-10-12", expired: false },
-  { title: "課題を1つ終える", attack: 20, expReward: 30, done: false, dueDate: "2025-10-15", expired: false },
-  { title: "部屋を掃除する", attack: 5, expReward: 5, done: false, dueDate: "2025-10-18", expired: false }
-];
+let todos = []; // 初期化時にLocalStorageからロードするため空に
+let historyLog = []; // 履歴データ構造
 
 // ==== 要素取得 ====
 const listEl = document.getElementById("todo-list");
@@ -24,53 +19,107 @@ const hpFillEl = document.getElementById("monster-hp-fill");
 const monsterImg = document.getElementById("monster");
 const todoForm = document.getElementById("todo-form");
 
-// ★追加: プレイヤーのステータス関連要素
+// プレイヤーのステータス関連要素
 const playerLevelDisplay = document.getElementById("player-level-display");
 const playerExpDisplay = document.getElementById("player-exp-display");
 const playerExpNextDisplay = document.getElementById("player-exp-next-display");
 const xpFillEl = document.getElementById("xp-fill");
+const historyListEl = document.getElementById("history-list"); // 履歴リスト要素
 
+// ==== データ永続化関数 ====
+function saveAllData() {
+    localStorage.setItem('monsterHP', monsterHP);
+    localStorage.setItem('playerStatus', JSON.stringify({ level: playerLevel, exp: playerExp }));
+    localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem('battleHistory', JSON.stringify(historyLog));
+}
 
-// ==== 関数 ====
+function loadAllData() {
+    // 1. モンスターHP
+    const savedHP = localStorage.getItem('monsterHP');
+    if (savedHP !== null) monsterHP = parseInt(savedHP);
+
+    // 2. プレイヤー状態
+    const savedStatus = localStorage.getItem('playerStatus');
+    if (savedStatus) {
+        const status = JSON.parse(savedStatus);
+        playerLevel = status.level;
+        playerExp = status.exp;
+    } else {
+        // 初回起動時の初期データ
+        playerLevel = 1;
+        playerExp = 0;
+    }
+
+    // 3. ToDoリスト
+    const savedTodos = localStorage.getItem('todos');
+    if (savedTodos) {
+        todos = JSON.parse(savedTodos);
+    } else {
+        // 初期ToDoリストの定義 (初回のみ)
+        todos = [
+            { title: "本を読む", attack: 10, expReward: 10, done: false, dueDate: "2025-10-12", expired: false },
+            
+        ];
+    }
+    
+    // 4. 履歴ログ
+    const savedHistory = localStorage.getItem('battleHistory');
+    if (savedHistory) {
+        historyLog = JSON.parse(savedHistory);
+    }
+}
+
+// ==== 描画・ロジック関数 ====
 
 function renderTodos() {
-  listEl.innerHTML = "";
-  todos.forEach((todo, index) => {
-    const li = document.createElement("li");
-    li.className = "todo-item";
-    
-    if (todo.done) li.classList.add("done");
-    if (todo.expired && !todo.done) li.classList.add("expired");
-    
-    // ★変更: 経験値報酬も表示に追加
-    li.textContent = `${todo.title}（攻:${todo.attack} / 経験値:${todo.expReward} / 期限:${todo.dueDate}）`;
-    li.onclick = () => completeTask(index);
-    listEl.appendChild(li);
-  });
+    listEl.innerHTML = "";
+    todos.forEach((todo, index) => {
+        const li = document.createElement("li");
+        li.className = "todo-item";
+        
+        if (todo.done) li.classList.add("done");
+        if (todo.expired && !todo.done) li.classList.add("expired");
+        
+        li.textContent = `${todo.title}（攻:${todo.attack} / 経験値:${todo.expReward} / 期限:${todo.dueDate}）`;
+        li.onclick = () => completeTask(index);
+        listEl.appendChild(li);
+    });
+    saveAllData();
 }
 
 function updateHPBar() {
-  const hpPercent = (monsterHP / monsterMaxHP) * 100;
-  hpFillEl.style.width = `${hpPercent}%`;
-  hpFillEl.style.background = monsterHP <= 0 ? "gray" : "red";
+    const hpPercent = (monsterHP / monsterMaxHP) * 100;
+    hpFillEl.style.width = `${hpPercent}%`;
+    hpFillEl.style.background = monsterHP <= 0 ? "gray" : "red";
+    saveAllData();
 }
 
-// ★追加: プレイヤーEXP/Lvを更新する関数
 function updatePlayerStatus() {
     const expPercent = (playerExp / EXP_TO_LEVEL_UP) * 100;
     
-    // HTML要素のテキストと幅を更新
     playerLevelDisplay.textContent = `Lv.${playerLevel}`;
     playerExpDisplay.textContent = playerExp;
     playerExpNextDisplay.textContent = EXP_TO_LEVEL_UP;
     xpFillEl.style.width = `${expPercent}%`;
+    saveAllData();
 }
 
-// ★追加: 経験値加算とレベルアップのロジック
+function renderHistory() {
+    historyListEl.innerHTML = "";
+    // 最新の履歴から表示するために reverse() を使う
+    historyLog.slice().reverse().forEach(log => {
+        const li = document.createElement("li");
+        li.textContent = `[${log.date}] ${log.type === 'TASK' ? 'クエスト達成' : 'モンスター討伐'}: ${log.details}`;
+        historyListEl.appendChild(li);
+    });
+    saveAllData();
+}
+
+
 function addExp(amount) {
     playerExp += amount;
     
-    // レベルアップ判定は completeTask でのみ行うため、ここでは EXP の上限チェックのみ
     if (playerExp > EXP_TO_LEVEL_UP) {
         playerExp = EXP_TO_LEVEL_UP;
     }
@@ -78,16 +127,22 @@ function addExp(amount) {
     updatePlayerStatus();
 }
 
-// ★追加: モンスター撃破時のレベルアップ処理
 function levelUp() {
     playerLevel++;
-    playerExp = 0; // EXPをリセット
+    playerExp = 0;
     alert(`🎉 レベルアップ！Lv.${playerLevel} になった！`);
-    updatePlayerStatus();
     
-    // 次のモンスターの準備（HPリセット、新しいモンスターに変更するなど）
-    monsterHP = monsterMaxHP;
+    // ★履歴記録: モンスター討伐ログ
+    historyLog.push({
+        date: new Date().toISOString().split('T')[0],
+        type: 'MONSTER',
+        details: `Lv.${playerLevel - 1} モンスターを討伐！`
+    });
+
+    updatePlayerStatus();
+    monsterHP = monsterMaxHP; // HPリセット
     updateHPBar();
+    renderHistory();
 }
 
 
@@ -96,7 +151,6 @@ function monsterHitAnimation() {
   setTimeout(() => monsterImg.classList.remove("hit"), 200);
 }
 
-// ... (checkDeadlines, applyPenalty, removePenalty 関数は省略、ロジック変更なし) ...
 function checkDeadlines() {
     const today = new Date().toISOString().split('T')[0]; 
     let expiredCount = 0;
@@ -134,15 +188,20 @@ function removePenalty() {
 }
 
 
-// ★変更: completeTask 関数に経験値獲得ロジックを追加
 function completeTask(index) {
   if (todos[index].done || monsterHP <= 0) return;
 
-  // 経験値獲得
   const expGained = todos[index].expReward; 
-  addExp(expGained); // 経験値を加算
+  
+  // ★履歴記録: タスク達成ログ
+  historyLog.push({
+      date: new Date().toISOString().split('T')[0],
+      type: 'TASK',
+      details: `${todos[index].title} を達成し、${expGained} EXPを獲得。`
+  });
 
-  // モンスターへのダメージ処理
+  addExp(expGained);
+
   todos[index].done = true;
   todos[index].expired = false; 
   monsterHP -= todos[index].attack;
@@ -153,16 +212,16 @@ function completeTask(index) {
   monsterHitAnimation();
   
   checkDeadlines(); 
+  renderHistory(); // 履歴リストを更新
 
   if (monsterHP === 0) {
     setTimeout(() => {
         alert("🎉 モンスターを倒した！");
-        levelUp(); // ★レベルアップ関数を呼び出し
+        levelUp(); 
     }, 300);
   }
 }
 
-// ★変更: addTodo 関数に経験値報酬の設定ロジックを追加
 function addTodo(title, difficulty, dueDate) {
     let attackValue;
     let expRewardValue; 
@@ -188,7 +247,7 @@ function addTodo(title, difficulty, dueDate) {
     const newTodo = {
         title: title,
         attack: attackValue,
-        expReward: expRewardValue, // ★追加
+        expReward: expRewardValue,
         done: false,
         dueDate: dueDate,
         expired: false
@@ -221,7 +280,9 @@ todoForm.addEventListener('submit', (e) => {
 
 
 // ==== 初期化 ====
+loadAllData(); // ★最重要: 最初にデータをロードする
 renderTodos();
 updateHPBar();
-updatePlayerStatus(); // ★追加: プレイヤーのステータスを初期表示
+updatePlayerStatus(); 
+renderHistory(); // 履歴を初期描画
 checkDeadlines();
