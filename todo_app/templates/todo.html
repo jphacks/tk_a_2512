@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ToDo作成</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>新しいToDoを追加</h1>
+  </header>
 
+  <main>
+    <form action="/todo" method="POST">
+      <label>タスク名: <input type="text" name="title" required></label><br><br>
+      <label>難易度:
+        <select name="difficulty">
+          <option value="low">低</option>
+          <option value="medium">中</option>
+          <option value="high">高</option>
+        </select>
+      </label><br><br>
+      <label>メモ: <textarea name="memo"></textarea></label><br><br>
+      <button type="submit">追加</button>
+    </form>
+    <br>
+    <a href="/">戻る</a>
+  </main>
+</body>
+</html>

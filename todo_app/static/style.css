@@ -1,1 +1,105 @@
-
+/* === 基本デザイン === */
+body {
+    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+    background: linear-gradient(180deg, #e2d9ff 0%, #faf8ff 100%);
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #6a4ee3;
+    color: #fff;
+    padding: 1rem 0;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  /* === モンスター表示部分 === */
+  #monster-section {
+    margin: 20px 0;
+  }
+  
+  #monster-section img {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, filter 0.2s;
+  }
+  
+  /* 攻撃アニメーション */
+  #monster-section img.hit {
+    transform: scale(1.1);
+    filter: brightness(1.5);
+  }
+  
+  /* HPバー */
+  #monster-hp-bar {
+    width: 300px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    margin: 10px auto;
+    overflow: hidden;
+  }
+  
+  #monster-hp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff4040, #ff8080);
+    width: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  /* === ToDoリスト === */
+  #todo-list {
+    list-style: none;
+    padding: 0;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .todo-item {
+    background: #fff;
+    margin: 8px 0;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .todo-item:hover {
+    background: #f5f1ff;
+  }
+  
+  .todo-item.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  
+  /* === フッター === */
+  footer {
+    margin-top: 40px;
+  }
+  
+  footer button {
+    background-color: #6a4ee3;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0 8px;
+    transition: background 0.2s;
+  }
+  
+  footer button:hover {
+    background-color: #543ac5;
+  }
