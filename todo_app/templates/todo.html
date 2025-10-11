@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>RPGバトルToDo</title>
+    <title>ToDoバトル</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -44,6 +44,12 @@
         </select>
         <button type="submit">作成</button>
     </form>
+    
+    <div id="history-section">
+        <h2>達成履歴</h2>
+        <ul id="history-list">
+            </ul>
+    </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
