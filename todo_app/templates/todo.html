@@ -9,6 +9,12 @@
 
     <div class="battle-card">
         <div class="player-section">
+            <div id="player-status">
+                <p><span id="player-level-display">Lv.1</span> | EXP: <span id="player-exp-display">0</span>/<span id="player-exp-next-display">100</span></p>
+                <div class="xp-bar-container">
+                    <div id="xp-fill" class="xp-fill" style="width: 0%;"></div>
+                </div>
+            </div>
             <img id="player" src="{{ url_for('static', filename='player.gif') }}" alt="プレイヤー">
         </div>
 
