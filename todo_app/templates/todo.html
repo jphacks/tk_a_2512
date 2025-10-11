@@ -7,14 +7,14 @@
 </head>
 <body>
 
-    <!-- バトルカード -->
     <div class="battle-card">
-        <!-- プレイヤー -->
         <div class="player-section">
             <img id="player" src="{{ url_for('static', filename='player.gif') }}" alt="プレイヤー">
-        </div>
+            
+            <div id="player-status">
+                </div>
+            </div>
 
-        <!-- モンスター -->
         <div class="monster-section hidden" id="monster-section">
             <div class="monster-hp-container">
                 <span id="monster-name">スライム</span>
@@ -27,11 +27,10 @@
         
     </div>
 
-    <!-- ToDo一覧 -->
     <h2>ToDo一覧</h2>
-    <div class="todo-list" id="todo-list"></div>
+    <ul id="todo-list">
+        </ul>
 
-    <!-- 新しいToDo作成フォーム -->
     <h2>新しいToDo作成</h2>
     <form id="todo-form">
         <input type="text" id="todo-title" placeholder="タスク名" required>
@@ -43,7 +42,6 @@
         <button type="submit">作成</button>
     </form>
 
-    <!-- JS -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
