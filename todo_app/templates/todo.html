@@ -10,12 +10,9 @@
     <div class="battle-card">
         <div class="player-section">
             <img id="player" src="{{ url_for('static', filename='player.gif') }}" alt="プレイヤー">
-            
-            <div id="player-status">
-                </div>
-            </div>
+        </div>
 
-        <div class="monster-section hidden" id="monster-section">
+        <div class="monster-section">
             <div class="monster-hp-container">
                 <span id="monster-name">スライム</span>
                 <div id="monster-hp-bar">
@@ -24,16 +21,16 @@
             </div>
             <img id="monster" src="{{ url_for('static', filename='monster.gif') }}" alt="モンスター">
         </div>
-        
     </div>
 
     <h2>ToDo一覧</h2>
-    <ul id="todo-list">
-        </ul>
+    <div class="todo-list" id="todo-list"></div>
 
     <h2>新しいToDo作成</h2>
     <form id="todo-form">
         <input type="text" id="todo-title" placeholder="タスク名" required>
+        <input type="date" id="todo-due-date" required> 
+        
         <select id="todo-difficulty">
             <option value="1">難易度1</option>
             <option value="2">難易度2</option>
