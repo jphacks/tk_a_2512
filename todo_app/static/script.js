@@ -326,14 +326,14 @@ updatePlayerStatus();
 renderHistory(); // 履歴を初期描画
 checkDeadlines();
 
-const sidebar = document.getElementById("sidebar");
-const openSidebarBtn = document.getElementById("open-sidebar");
-const closeSidebarBtn = document.getElementById("close-sidebar");
+const menuBar = document.getElementById("menu-bar");
+const openMenuBarBtn = document.getElementById("open-menu-bar");
+const closeMenuBarBtn = document.getElementById("close-menu-bar");
 
-openSidebarBtn.addEventListener("click", () => {
-    sidebar.classList.add("open");
+openMenuBarBtn.addEventListener("click", () => {
+    menuBar.classList.add("open");
 });
 
-closeSidebarBtn.addEventListener("click", () => {
-    sidebar.classList.remove("open");
+closeMenuBarBtn.addEventListener("click", () => {
+    menuBar.classList.remove("open");
 });

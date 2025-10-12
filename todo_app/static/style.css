@@ -181,8 +181,8 @@ button {
     display: none;
 }
 
-/* ===== サイドバー本体 ===== */
-#sidebar {
+/* ===== メニューバー本体 ===== */
+#menu-bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -198,13 +198,13 @@ button {
     display: block; /* 初期表示は非表示ではなく画面外に隠す */
 }
 
-/* サイドバーを開いた状態 */
-#sidebar.open {
+/* メニューバーを開いた状態 */
+#menu-bar.open {
     transform: translateX(0); /* 左からスライドして表示 */
 }
 
 /* 閉じるボタン */
-#close-sidebar {
+#close-menu-bar {
     font-size: 24px;
     background: none;
     border: none;
@@ -212,10 +212,11 @@ button {
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 1001;
 }
 
 /* 開くボタン */
-#open-sidebar {
+#open-menu-bar {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -228,14 +229,14 @@ button {
     border-radius: 5px;
 }
 
-/* サイドバー内リスト */
-#sidebar ul {
+/* メニューバー内リスト */
+#menu-bar ul {
     list-style: none;
     padding: 0;
     margin-top: 20px;
 }
 
-#sidebar ul li {
+#menu-bar ul li {
     padding: 8px 0;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
