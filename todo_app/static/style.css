@@ -300,12 +300,20 @@ button {
     background-color: #cc0000;
 }
 
-/* プレイヤー名と変更ボタンをカード内で中央寄せ */
-.player-section > div {
-    display: flex;                  /* 横並びに */
-    justify-content: center;        /* 中央揃え */
-    align-items: center;            /* 垂直中央揃え */
-    margin-top: 5px;                /* 上マージン */
+/* ===== マイページ: 横並び ===== */
+body.mypage .player-section > div {
+    display: flex;
+    flex-direction: row;     /* 横並び */
+    align-items: center;
+    gap: 10px;
+}
+
+/* ===== ToDoページ: 縦並び ===== */
+body.todo-page .player-section > div {
+    display: flex;
+    flex-direction: column;  /* 縦並び */
+    align-items: flex-start;
+    gap: 5px;
 }
 
 /* 変更ボタンの見た目調整 */
