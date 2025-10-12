@@ -32,12 +32,18 @@
             <div id="player-stats-summary" style="margin-top: 10px; font-size: 14px;">
                 <p>累計討伐数: <span id="monster-kill-count">0</span> 体</p>
                 <p>累計達成タスク: <span id="task-complete-count">0</span> 件</p>
+                <p>連続討伐記録: <span id="kill-streak-display" style="font-weight: bold; color: green;">0 日</span></p>
             </div>
-            </div>
+
+        </div>
     </div>
 </div>
 
-    <a href="/">ホームに戻る</a>
+<h2 style="margin-top: 20px;">今日の未達成タスク</h2>
+<div id="today-todos-list" style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.9);">
+    <p style="margin: 0;">読み込み中...</p>
+</div>
+<a href="/">ホームに戻る</a>
     <script src="{{ url_for('static', filename='mypage.js') }}"></script>
 </body>
 </html>
