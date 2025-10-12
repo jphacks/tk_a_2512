@@ -211,39 +211,36 @@ function removePenalty() {
 
 
 function completeTask(index) {
-  if (todos[index].done || !monsterExists) return;
+    if (todos[index].done || !monsterExists) return;
 
-  const expGained = todos[index].expReward; 
-  
-  // ★履歴記録: タスク達成ログ
-  historyLog.push({
-      date: new Date().toISOString().split('T')[0],
-      type: 'TASK',
-      details: `${todos[index].title} を達成し、${expGained} EXPを獲得。`
-  });
+    const expGained = todos[index].expReward; 
 
-  addExp(expGained);
+    // 完了日時を記録
+    todos[index].done = true;
+    todos[index].doneDate = new Date().toISOString(); 
+    todos[index].expired = false;
 
-  todos[index].done = true;
-  todos[index].expired = false; 
-  monsterHP -= todos[index].attack;
-  if (monsterHP < 0) monsterHP = 0;
+    addExp(expGained);
 
-  renderTodos();
-  updateHPBar();
-  monsterHitAnimation();
-  
-  checkDeadlines(); 
-  renderHistory(); // 履歴リストを更新
+    monsterHP -= todos[index].attack;
+    if (monsterHP < 0) monsterHP = 0;
 
-  if (monsterHP === 0) {
-    setTimeout(() => {
-        alert("🎉 モンスターを倒した！");
-        levelUp(); 
-        createNewMonster();
-    }, 300);
-  }
+    renderTodos();
+    updateHPBar();
+    monsterHitAnimation();
+    
+    checkDeadlines(); 
+    renderHistory();
+
+    if (monsterHP === 0) {
+        setTimeout(() => {
+            alert("🎉 モンスターを倒した！");
+            levelUp(); 
+            createNewMonster();
+        }, 300);
+    }
 }
+
 
 // ==== モンスター生成関数 ====
 function createNewMonster() {
@@ -296,6 +293,23 @@ function addTodo(title, difficulty, dueDate) {
     }
 }
 
+function removeOldCompletedTodos() {
+    const now = new Date();
+
+    todos = todos.filter(todo => {
+        if (todo.done && todo.doneDate) {
+            const doneTime = new Date(todo.doneDate);
+            const diffHours = (now - doneTime) / 1000 / 60 / 60;
+            if (diffHours >= 24) {
+                return false; // 24時間経過したタスクを削除
+            }
+        }
+        return true;
+    });
+
+    renderTodos();
+}
+
 // フォームの送信イベントリスナー
 todoForm.addEventListener('submit', (e) => {
     e.preventDefault(); 
@@ -325,6 +339,10 @@ updateHPBar();
 updatePlayerStatus(); 
 renderHistory(); // 履歴を初期描画
 checkDeadlines();
+removeOldCompletedTodos(); // 最初に実行
+
+// 1時間ごとに自動で削除チェック
+setInterval(removeOldCompletedTodos, 60 * 60 * 1000);
 
 const menuBar = document.getElementById("menu-bar");
 const openMenuBarBtn = document.getElementById("open-menu-bar");
