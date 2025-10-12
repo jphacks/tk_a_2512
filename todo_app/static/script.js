@@ -138,8 +138,17 @@ function renderTodos() {
         if (todo.done) li.classList.add("done");
         if (todo.expired && !todo.done) li.classList.add("expired");
         
-        li.textContent = `${todo.title}（攻:${todo.attack} / 経験値:${todo.expReward} / 期限:${todo.dueDate}）`;
-        
+
+
+        // HTML部分はメモを画面上には直接表示しない
+        li.innerHTML = `
+            <strong>${todo.title}</strong><br>
+            <span style="font-size: 13px;">
+                （攻:${todo.attack} / 経験値:${todo.expReward} / 期限:${todo.dueDate}）
+            </span>
+            ${todo.memo && todo.memo.trim() !== "" ? `<div class="todo-tooltip">${todo.memo}</div>` : ""}
+        `;
+
         const originalIndex = todos.findIndex(t => t === todo);
         li.onclick = () => completeTask(originalIndex);
         
@@ -305,7 +314,7 @@ function createNewMonster() {
     saveAllData();
 }
 
-function addTodo(title, difficulty, dueDate) {
+function addTodo(title, difficulty, dueDate, memo = "") {
     let attackValue;
     let expRewardValue; 
 
@@ -333,7 +342,8 @@ function addTodo(title, difficulty, dueDate) {
         expReward: expRewardValue,
         done: false,
         dueDate: dueDate,
-        expired: false
+        expired: false,
+        memo: memo
     };
 
     todos.push(newTodo);
@@ -408,15 +418,18 @@ todoForm.addEventListener('submit', (e) => {
     const titleInput = document.getElementById("todo-title");
     const difficultySelect = document.getElementById("todo-difficulty");
     const dateInput = document.getElementById("todo-due-date");
+    const memoInput = document.getElementById("todo-memo"); 
     
     const title = titleInput.value.trim();
     const difficulty = difficultySelect.value;
     const dueDate = dateInput.value;
+    const memo = memoInput.value.trim();
     
     if (title && dueDate) {
-        addTodo(title, difficulty, dueDate);
+        addTodo(title, difficulty, dueDate, memo);
         titleInput.value = ''; 
         dateInput.value = ''; 
+        memoInput.value = ''; 
         
         checkDeadlines(); 
     }

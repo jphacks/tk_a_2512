@@ -321,3 +321,81 @@ body.todo-page .player-section > div {
     padding: 2px 6px;               /* 内側余白 */
     font-size: 12px;                /* フォントサイズ */
 }
+
+/* ToDoメモ吹き出しスタイル（白背景・黒文字・右側に表示） */
+.todo-tooltip {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 105%; /* liの右側に表示 */
+    transform: translateY(-50%);
+    background-color: #fff; /* 白背景 */
+    color: #000;            /* 黒文字 */
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    z-index: 10;
+    max-width: 220px;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* 吹き出しの矢印（白背景用） */
+.todo-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -5px; /* 左側に矢印 */
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #fff transparent transparent;
+}
+
+/* ホバー時に表示 */
+.todo-item:hover .todo-tooltip {
+    display: block;
+}
+
+/* 吹き出しスタイル（右横に表示） */
+.todo-item {
+    position: relative; /* 必須 */
+}
+
+.todo-tooltip {
+    display: none;
+    position: absolute;
+    top: 50%;           /* 縦中央 */
+    left: 100%;         /* liの右端に合わせる */
+    margin-left: 8px;   /* 少し右に空白を作る */
+    transform: translateY(-50%);
+    background-color: #fff; /* 白背景 */
+    color: #000;            /* 黒文字 */
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    z-index: 10;
+    max-width: 220px;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* 吹き出しの矢印（左向き） */
+.todo-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -5px;           /* 左側に矢印 */
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #fff transparent transparent;
+}
+
+/* ホバーで表示 */
+.todo-item:hover .todo-tooltip {
+    display: block;
+}
+
