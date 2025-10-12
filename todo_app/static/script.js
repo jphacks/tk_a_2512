@@ -1,9 +1,10 @@
 // static/script.js
 
 // ==== 初期データ ====
-let monsterHP = 100;  
+let monsterHP = 0;  
 let monsterMaxHP = 100;
 let isPenaltyActive = false;
+let monsterExists = false;
 
 // プレイヤーのステータス
 let playerLevel = 1;
@@ -18,6 +19,8 @@ const listEl = document.getElementById("todo-list");
 const hpFillEl = document.getElementById("monster-hp-fill");
 const monsterImg = document.getElementById("monster");
 const todoForm = document.getElementById("todo-form");
+const hpBarContainer = document.getElementById("monster-hp-bar");
+const monsterNameEl = document.getElementById("monster-name"); 
 
 // プレイヤーのステータス関連要素
 const playerLevelDisplay = document.getElementById("player-level-display");
@@ -35,40 +38,49 @@ function saveAllData() {
 }
 
 function loadAllData() {
-    // 1. モンスターHP
-    const savedHP = localStorage.getItem('monsterHP');
-    if (savedHP !== null) monsterHP = parseInt(savedHP);
+    //  初回起動判定
+    const firstRun = localStorage.getItem('firstRun');
 
-    // 2. プレイヤー状態
-    const savedStatus = localStorage.getItem('playerStatus');
-    if (savedStatus) {
-        const status = JSON.parse(savedStatus);
-        playerLevel = status.level;
-        playerExp = status.exp;
-    } else {
-        // 初回起動時の初期データ
+    if (!firstRun) {
+        //  初回起動時の初期化
+        monsterHP = monsterMaxHP;  // 初回はモンスター満タン
+        monsterExists = false;      // まだ画面には表示しない
+        todos = [
+            { title: "本を読む", attack: 10, expReward: 10, done: false, dueDate: "2025-10-12", expired: false }
+        ];
+        historyLog = [];
         playerLevel = 1;
         playerExp = 0;
+
+        localStorage.setItem('firstRun', 'done'); // 初回フラグを保存
+        saveAllData(); // 初期値を保存
+    } else {
+        //  前回の状態を復元
+        const savedHP = localStorage.getItem('monsterHP');
+        monsterHP = savedHP !== null ? parseInt(savedHP) : monsterMaxHP;
+
+        const savedStatus = localStorage.getItem('playerStatus');
+        if (savedStatus) {
+            const status = JSON.parse(savedStatus);
+            playerLevel = status.level;
+            playerExp = status.exp;
+        }
+
+        const savedTodos = localStorage.getItem('todos');
+        todos = savedTodos ? JSON.parse(savedTodos) : [];
+
+        const savedHistory = localStorage.getItem('battleHistory');
+        historyLog = savedHistory ? JSON.parse(savedHistory) : [];
     }
 
-    // 3. ToDoリスト
-    const savedTodos = localStorage.getItem('todos');
-    if (savedTodos) {
-        todos = JSON.parse(savedTodos);
+    //  モンスター表示判定
+    if (monsterHP > 0 && monsterExists) {
+        monsterImg.style.display = "block";
     } else {
-        // 初期ToDoリストの定義 (初回のみ)
-        todos = [
-            { title: "本を読む", attack: 10, expReward: 10, done: false, dueDate: "2025-10-12", expired: false },
-            
-        ];
-    }
-    
-    // 4. 履歴ログ
-    const savedHistory = localStorage.getItem('battleHistory');
-    if (savedHistory) {
-        historyLog = JSON.parse(savedHistory);
+        monsterImg.style.display = "none";
     }
 }
+
 
 // ==== 描画・ロジック関数 ====
 
@@ -89,11 +101,21 @@ function renderTodos() {
 }
 
 function updateHPBar() {
-    const hpPercent = (monsterHP / monsterMaxHP) * 100;
-    hpFillEl.style.width = `${hpPercent}%`;
-    hpFillEl.style.background = monsterHP <= 0 ? "gray" : "red";
+    if (!monsterExists) {
+        hpBarContainer.style.display = "none"; // バー非表示
+        monsterImg.style.display = "none";     // 画像非表示
+        monsterNameEl.style.display = "none";  // 名前非表示
+    } else {
+        hpBarContainer.style.display = "block"; 
+        monsterImg.style.display = "block";
+        monsterNameEl.style.display = "inline"; // 名前を表示
+        const hpPercent = (monsterHP / monsterMaxHP) * 100;
+        hpFillEl.style.width = `${hpPercent}%`;
+        hpFillEl.style.background = monsterHP <= 0 ? "gray" : "red";
+    }
     saveAllData();
 }
+
 
 function updatePlayerStatus() {
     const expPercent = (playerExp / EXP_TO_LEVEL_UP) * 100;
@@ -189,7 +211,7 @@ function removePenalty() {
 
 
 function completeTask(index) {
-  if (todos[index].done || monsterHP <= 0) return;
+  if (todos[index].done || !monsterExists) return;
 
   const expGained = todos[index].expReward; 
   
@@ -218,8 +240,20 @@ function completeTask(index) {
     setTimeout(() => {
         alert("🎉 モンスターを倒した！");
         levelUp(); 
+        createNewMonster();
     }, 300);
   }
+}
+
+// ==== モンスター生成関数 ====
+function createNewMonster() {
+    monsterHP = monsterMaxHP;
+    monsterExists = true;
+    monsterImg.style.display = "block";
+
+    alert("👾 新しいモンスターが現れた！");
+    updateHPBar();
+    saveAllData();
 }
 
 function addTodo(title, difficulty, dueDate) {
@@ -255,6 +289,11 @@ function addTodo(title, difficulty, dueDate) {
 
     todos.push(newTodo);
     renderTodos(); 
+
+    //  モンスターがいなければ生成
+    if (!monsterExists) {
+        createNewMonster();
+    }
 }
 
 // フォームの送信イベントリスナー

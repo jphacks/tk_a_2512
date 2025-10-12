@@ -21,10 +21,18 @@ with app.app_context():
         db.session.commit()
 
 # --- モンスター取得・HP更新 ---
-def get_today_monster():
-    monster = Monster.query.filter_by(date=date.today()).first()
+def get_monster():
+    monster = Monster.query.first()
     if not monster:
-        monster = Monster(name="モンスター")
+        # 初回起動時にモンスター作成
+        monster = Monster(name="モンスター", hp=100)
+        db.session.add(monster)
+        db.session.commit()
+    elif monster.hp <= 0:
+        # 倒されたモンスターを再生成
+        db.session.delete(monster)
+        db.session.commit()
+        monster = Monster(name="モンスター", hp=100)
         db.session.add(monster)
         db.session.commit()
     return monster
@@ -55,19 +63,18 @@ def create_todo():
 
     if title:
         todo = Todo(title=title, difficulty=difficulty)
-        todo.set_attack_power()  # 攻撃力を設定
+        todo.set_attack_power()
         db.session.add(todo)
-
-        # モンスターHPを作成済みなら増やす
-        monster = get_today_monster()
-        monster.hp += todo.attack_power  # Todo作成時にHPを増やす
-
         db.session.commit()
 
         return jsonify({
             "status": "ok",
-            "todo": {"id": todo.id, "title": todo.title, "attack_power": todo.attack_power, "done": todo.done},
-            "monster_hp": monster.hp
+            "todo": {
+                "id": todo.id,
+                "title": todo.title,
+                "attack_power": todo.attack_power,
+                "done": todo.done
+            }
         })
     return jsonify({"status": "error"}), 400
 
@@ -75,17 +82,24 @@ def create_todo():
 @app.route("/api/complete_todo/<int:todo_id>", methods=["POST"])
 def complete_todo(todo_id):
     todo = Todo.query.get(todo_id)
-    monster = get_today_monster()
+    monster = get_monster()
     player = Player.query.first()
 
     if not todo or todo.done:
         return jsonify({"status": "error", "message": "無効なタスク"}), 400
 
     todo.done = True
-    if monster:
-        monster.hp = max(0, monster.hp - todo.attack_power)  # 攻撃力分減少
-        if monster.hp == 0:
-            player.level += 1
+    monster.hp = max(0, monster.hp - todo.attack_power)
+
+    if monster.hp == 0:
+        player.level += 1
+        # 新しいモンスター生成
+        db.session.delete(monster)
+        db.session.commit()
+        new_monster = Monster(name="モンスター", hp=100)
+        db.session.add(new_monster)
+        db.session.commit()
+        monster = new_monster
 
     db.session.commit()
 

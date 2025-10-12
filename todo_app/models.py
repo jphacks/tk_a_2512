@@ -11,7 +11,7 @@ class Player(db.Model):
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    difficulty = db.Column(db.String(20))
+    difficulty = db.Column(db.Integer, default=1)  
     attack_power = db.Column(db.Integer, default=0)
     done = db.Column(db.Boolean, default=False)
     date = db.Column(db.Date, default=date.today)
