@@ -37,10 +37,14 @@ def get_monster():
         db.session.commit()
     return monster
 
-# --- main page ---
+# --- page ---
 @app.route("/")
 def index():
     return render_template("todo.html")
+
+@app.route("/mypage")
+def mypage():
+    return render_template("mypage.html")
 
 # --- API: プレイヤー情報取得 ---
 @app.route("/api/status")  #status API
