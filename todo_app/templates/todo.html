@@ -7,17 +7,16 @@
 </head>
 <body>
 
-    <!-- メニューバー -->
     <div id="menu-bar">
         <h2>メニュー</h2>
         <button id="close-menu-bar">&times;</button>
         <ul>
-            <li><a href="/mypage">マイページ</a></li>
+            <li id="my-page">マイページ</li>
             <li id="settings">設定</li>
+            <li><button id="clear-history-btn" class="menu-btn">達成履歴を削除</button></li>
         </ul>
     </div>
 
-    <!-- メニューバー開閉ボタン -->
     <button id="open-menu-bar">&#9776; メニュー</button>
 
     <div class="battle-card">
@@ -55,16 +54,12 @@
             <option value="2">難易度2</option>
             <option value="3">難易度3</option>
         </select>
-        <button type="submit">作成</button>
+        <button type="submit">ToDo追加</button>
     </form>
-    
-    <div id="history-section">
-        <h2>達成履歴</h2>
-        <ul id="history-list">
-            </ul>
-    </div>
+
+    <h2>達成履歴</h2>
+    <div class="history-list" id="history-list"></div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>

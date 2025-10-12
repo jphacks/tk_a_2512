@@ -242,3 +242,35 @@ button {
     cursor: pointer;
     font-weight: bold;
 }
+
+/* ★変更点: 達成履歴リストのスタイル */
+.history-list {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.history-list li {
+    list-style-type: none;
+    font-size: 0.9em;
+    margin-bottom: 3px;
+    padding: 2px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+/* ★変更点: メニューバー内の削除ボタンのスタイル */
+.menu-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #ff4d4d; /* 警告色 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.menu-btn:hover {
+    background-color: #cc0000;
+}

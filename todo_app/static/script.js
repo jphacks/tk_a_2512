@@ -1,7 +1,5 @@
-// static/script.js
-
 // ==== 初期データ ====
-let monsterHP = 0;  
+let monsterHP = 0;
 let monsterMaxHP = 100;
 let isPenaltyActive = false;
 let monsterExists = false;
@@ -9,7 +7,7 @@ let monsterExists = false;
 // プレイヤーのステータス
 let playerLevel = 1;
 let playerExp = 0;
-const EXP_TO_LEVEL_UP = 100; 
+const EXP_TO_LEVEL_UP = 100;
 
 let todos = []; // 初期化時にLocalStorageからロードするため空に
 let historyLog = []; // 履歴データ構造
@@ -20,7 +18,7 @@ const hpFillEl = document.getElementById("monster-hp-fill");
 const monsterImg = document.getElementById("monster");
 const todoForm = document.getElementById("todo-form");
 const hpBarContainer = document.getElementById("monster-hp-bar");
-const monsterNameEl = document.getElementById("monster-name"); 
+const monsterNameEl = document.getElementById("monster-name");
 
 // プレイヤーのステータス関連要素
 const playerLevelDisplay = document.getElementById("player-level-display");
@@ -28,6 +26,8 @@ const playerExpDisplay = document.getElementById("player-exp-display");
 const playerExpNextDisplay = document.getElementById("player-exp-next-display");
 const xpFillEl = document.getElementById("xp-fill");
 const historyListEl = document.getElementById("history-list"); // 履歴リスト要素
+// ★変更点: 履歴削除ボタンの要素を取得
+const clearHistoryBtn = document.getElementById("clear-history-btn"); 
 
 // ==== データ永続化関数 ====
 function saveAllData() {
@@ -310,6 +310,21 @@ function removeOldCompletedTodos() {
     renderTodos();
 }
 
+
+// ★変更点: 履歴削除機能の追加
+function clearHistory() {
+    // 確認ダイアログを表示
+    const confirmed = confirm("本当に達成履歴のデータを全て削除してもよろしいですか？この操作は取り消せません。");
+    
+    if (confirmed) {
+        historyLog = []; // 履歴データを空にする
+        renderHistory(); // 履歴リストを再描画（空になる）
+        saveAllData(); // LocalStorageに保存
+        alert("達成履歴を全て削除しました。");
+    }
+}
+
+
 // フォームの送信イベントリスナー
 todoForm.addEventListener('submit', (e) => {
     e.preventDefault(); 
@@ -330,6 +345,11 @@ todoForm.addEventListener('submit', (e) => {
         checkDeadlines(); 
     }
 });
+
+// ★変更点: 履歴削除ボタンのイベントリスナー追加
+if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener('click', clearHistory);
+}
 
 
 // ==== 初期化 ====
