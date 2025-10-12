@@ -14,11 +14,17 @@ db.init_app(app)
 # --- 初回起動時にデータベースを作成 ---
 with app.app_context():
     db.create_all()
-    # プレイヤーがまだいなければ作成
-    if not Player.query.first():
+    player = Player.query.first()
+    if not player:
+        # プレイヤーが存在しなければ作成
         player = Player(name="勇者")
         db.session.add(player)
         db.session.commit()
+    elif not player.name or player.name.strip() == "":
+        # 名前が空の場合、初期名を設定
+        player.name = "勇者"
+        db.session.commit()
+
 
 # --- モンスター取得・HP更新 ---
 def get_monster():
@@ -50,13 +56,26 @@ def mypage():
 @app.route("/api/status")  #status API
 def get_status():
     player = Player.query.first()
-    monster = get_today_monster()
+    monster = get_monster()
     todos = Todo.query.filter_by(date=date.today()).all()
     return jsonify({
         "player": {"name": player.name, "level": player.level},
         "monster": {"name": monster.name, "hp": monster.hp},
         "todos": [{"id": t.id, "title": t.title, "attack_power": t.attack_power, "done": t.done} for t in todos]
     })
+
+# プレイヤー名変更API
+@app.route("/api/change_name", methods=["POST"])
+def change_name():
+    data = request.json
+    new_name = data.get("name")
+    if not new_name:
+        return jsonify({"status": "error", "message": "名前が空です"}), 400
+
+    player = Player.query.first()
+    player.name = new_name
+    db.session.commit()
+    return jsonify({"status": "ok", "name": player.name})
 
 # --- Todo作成処理 ---
 @app.route("/api/create_todo", methods=["POST"])
