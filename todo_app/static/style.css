@@ -299,3 +299,17 @@ button {
 .menu-btn:hover {
     background-color: #cc0000;
 }
+
+/* プレイヤー名と変更ボタンをカード内で中央寄せ */
+.player-section > div {
+    display: flex;                  /* 横並びに */
+    justify-content: center;        /* 中央揃え */
+    align-items: center;            /* 垂直中央揃え */
+    margin-top: 5px;                /* 上マージン */
+}
+
+/* 変更ボタンの見た目調整 */
+#change-name-btn {
+    padding: 2px 6px;               /* 内側余白 */
+    font-size: 12px;                /* フォントサイズ */
+}

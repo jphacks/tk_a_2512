@@ -8,23 +8,32 @@
 <body>
     <h1>マイページ</h1>
 
-    <div>
-        <span>プレイヤー名: </span>
-        <span id="player-name">読み込み中...</span>
-        <button id="change-name-btn">変更</button>
-    </div>
-
     <div class="battle-card" style="margin-top:10px;">
-        <div class="player-section">
+        <div class="player-section" style="display:flex; align-items:center; gap:10px;">
             <img id="player-img" src="/static/player.gif" alt="プレイヤー" style="width:100px; height:auto;">
-            <div id="player-status" style="margin-top:5px;">
-                <p><span id="player-level-display">Lv.1</span> | EXP: <span id="player-exp-display">0</span>/<span id="player-exp-next-display">100</span></p>
+            <!-- 右側: 名前・変更ボタン・ステータスまとめ -->
+        <div style="display:flex; flex-direction:column; gap:5px;">
+
+            <!-- 名前 + 変更ボタン -->
+            <div style="display:flex; align-items:center; gap:5px;">
+                <span>プレイヤー名: </span>
+                <span id="player-name">読み込み中...</span>
+                <button id="change-name-btn">変更</button>
+            </div>
+
+            <!-- レベル・EXPバー -->
+            <div id="player-status">
+                <p>
+                    <span id="player-level-display">Lv.1</span> | 
+                    EXP: <span id="player-exp-display">0</span>/<span id="player-exp-next-display">100</span>
+                </p>
                 <div class="xp-bar-container" style="width:150px;">
                     <div id="xp-fill" class="xp-fill" style="width:0%;"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <a href="/">ホームに戻る</a>
     <script src="{{ url_for('static', filename='mypage.js') }}"></script>
