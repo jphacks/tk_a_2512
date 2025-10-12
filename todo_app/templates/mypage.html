@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>マイページ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>マイページ</h1>
@@ -11,6 +12,18 @@
         <span>プレイヤー名: </span>
         <span id="player-name">読み込み中...</span>
         <button id="change-name-btn">変更</button>
+    </div>
+
+    <div class="battle-card" style="margin-top:10px;">
+        <div class="player-section">
+            <img id="player-img" src="/static/player.gif" alt="プレイヤー" style="width:100px; height:auto;">
+            <div id="player-status" style="margin-top:5px;">
+                <p><span id="player-level-display">Lv.1</span> | EXP: <span id="player-exp-display">0</span>/<span id="player-exp-next-display">100</span></p>
+                <div class="xp-bar-container" style="width:150px;">
+                    <div id="xp-fill" class="xp-fill" style="width:0%;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <a href="/">ホームに戻る</a>
