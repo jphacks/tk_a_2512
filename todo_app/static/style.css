@@ -193,9 +193,9 @@ button {
     box-shadow: 2px 0 5px rgba(0,0,0,0.3);
     padding: 20px;
     z-index: 1000;
+
     transform: translateX(-100%); /* 初期は画面外に完全に隠す */
-    transition: transform 0.3s ease;
-    display: block; /* 初期表示は非表示ではなく画面外に隠す */
+    transition: transform 0.3s ease; /* スライドアニメーション */
 }
 
 /* メニューバーを開いた状態 */
