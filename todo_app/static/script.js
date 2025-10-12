@@ -37,6 +37,7 @@ function saveAllData() {
     localStorage.setItem('playerStatus', JSON.stringify({ level: playerLevel, exp: playerExp }));
     localStorage.setItem('todos', JSON.stringify(todos));
     localStorage.setItem('battleHistory', JSON.stringify(historyLog));
+    localStorage.setItem('monsterExists', JSON.stringify(monsterExists));
 }
 
 function loadAllData() {
@@ -57,6 +58,9 @@ function loadAllData() {
     } else {
         const savedHP = localStorage.getItem('monsterHP');
         monsterHP = savedHP !== null ? parseInt(savedHP) : monsterMaxHP;
+
+        const savedExists = localStorage.getItem('monsterExists'); 
+        monsterExists = savedExists ? JSON.parse(savedExists) : false;
 
         const savedStatus = localStorage.getItem('playerStatus');
         if (savedStatus) {
