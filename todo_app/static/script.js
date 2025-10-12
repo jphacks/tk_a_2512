@@ -413,6 +413,18 @@ removeOldCompletedTodos();
 
 setInterval(removeOldCompletedTodos, 60 * 60 * 1000);
 
+function syncPlayerStatusAcrossPages() {
+    const savedStatus = localStorage.getItem('playerStatus');
+    if (savedStatus) {
+        const status = JSON.parse(savedStatus);
+        playerLevel = status.level;
+        playerExp = status.exp;
+        updatePlayerStatus();
+    }
+}
+//  1秒ごとに同期
+setInterval(syncPlayerStatusAcrossPages, 1000);
+
 const menuBar = document.getElementById("menu-bar");
 const openMenuBarBtn = document.getElementById("open-menu-bar");
 const closeMenuBarBtn = document.getElementById("close-menu-bar");

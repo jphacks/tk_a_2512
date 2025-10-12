@@ -10,29 +10,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const EXP_TO_LEVEL_UP = 100;
 
     // --- プレイヤーステータス取得 ---
-    async function loadPlayerStatus() {
-        try {
-            const res = await fetch("/api/status");
-            const data = await res.json();
+    function loadPlayerStatus() {
+    const savedStatus = localStorage.getItem('playerStatus'); // 変更: ToDoページと同じキーを使用
+    if (savedStatus) {
+        const status = JSON.parse(savedStatus);
 
-            // 名前未設定なら初期名を表示
-            nameEl.textContent = data.player.name || "勇者";
+        // DOM反映
+        if (playerLevelDisplay) playerLevelDisplay.textContent = `Lv.${status.level}`;
+        if (playerExpDisplay) playerExpDisplay.textContent = status.exp;
+        if (playerExpNextDisplay) playerExpNextDisplay.textContent = 100;
 
-            // レベルと経験値更新
-            playerLevelDisplay.textContent = `Lv.${data.player.level}`;
-            playerExpDisplay.textContent = data.player.exp;
-            playerExpNextDisplay.textContent = EXP_TO_LEVEL_UP;
-            const expPercent = (data.player.exp / EXP_TO_LEVEL_UP) * 100;
+        if (xpFillEl) {
+            const expPercent = (status.exp / 100) * 100; //  変更: XPバーの幅を計算
             xpFillEl.style.width = `${expPercent}%`;
-
-            // プレイヤー画像表示（必要に応じて変える）
-            if (playerImgEl && !playerImgEl.src) {
-                playerImgEl.src = "/static/player.gif";
-            }
-        } catch (err) {
-            console.error("プレイヤーステータス取得エラー:", err);
         }
     }
+}
 
     // 初期ロード
     loadPlayerStatus();
