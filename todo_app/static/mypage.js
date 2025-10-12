@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const killCount = historyLog.filter(log => log.type === 'MONSTER').length;
-        const taskCount = historyLog.filter(log => log.type === 'TASK').length;
+        const taskCount = parseInt(localStorage.getItem('totalTasksCompleted') || '0');
 
         if (monsterKillCountEl) {
             monsterKillCountEl.textContent = killCount; 

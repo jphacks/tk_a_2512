@@ -286,6 +286,10 @@ function completeTask(index) {
         details: `「${todos[index].title}」を達成し、モンスターに${todos[index].attack}ダメージを与えた！`
     });
 
+    let totalTasksCompleted = parseInt(localStorage.getItem('totalTasksCompleted') || '0');
+    totalTasksCompleted += 1;
+    localStorage.setItem('totalTasksCompleted', totalTasksCompleted);
+
     renderTodos();
     updateHPBar();
     monsterHitAnimation();
