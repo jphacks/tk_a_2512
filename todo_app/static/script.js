@@ -369,6 +369,33 @@ function clearHistory() {
     }
 }
 
+const clearAllBtn = document.getElementById("clear-all-btn");
+
+if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', () => {
+        const confirmed = confirm("本当に全データを削除して初期状態に戻しますか？");
+        if (!confirmed) return;
+
+        // localStorage から全データ削除
+        localStorage.clear();
+
+        // 初期状態にリセット
+        monsterHP = monsterMaxHP;
+        monsterExists = false;
+        todos = [];
+        historyLog = [];
+        playerLevel = 1;
+        playerExp = 0;
+
+        // 描画更新
+        renderTodos();
+        updateHPBar();
+        updatePlayerStatus();
+        renderHistory();
+
+        alert("全データを削除して初期状態に戻しました。");
+    });
+}
 
 // フォームの送信イベントリスナー
 todoForm.addEventListener('submit', (e) => {
