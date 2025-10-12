@@ -180,3 +180,64 @@ button {
 .hidden {
     display: none;
 }
+
+/* ===== サイドバー本体 ===== */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 33.33%;        /* 開いた時の幅は画面の1/3 */
+    max-width: 300px;      /* 必要に応じて最大幅 */
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+    padding: 20px;
+    z-index: 1000;
+    transform: translateX(-100%); /* 初期は画面外に完全に隠す */
+    transition: transform 0.3s ease;
+    display: block; /* 初期表示は非表示ではなく画面外に隠す */
+}
+
+/* サイドバーを開いた状態 */
+#sidebar.open {
+    transform: translateX(0); /* 左からスライドして表示 */
+}
+
+/* 閉じるボタン */
+#close-sidebar {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* 開くボタン */
+#open-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+    font-size: 18px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: rgba(255,255,255,0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* サイドバー内リスト */
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+#sidebar ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    font-weight: bold;
+}

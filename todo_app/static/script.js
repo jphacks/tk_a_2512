@@ -325,3 +325,15 @@ updateHPBar();
 updatePlayerStatus(); 
 renderHistory(); // 履歴を初期描画
 checkDeadlines();
+
+const sidebar = document.getElementById("sidebar");
+const openSidebarBtn = document.getElementById("open-sidebar");
+const closeSidebarBtn = document.getElementById("close-sidebar");
+
+openSidebarBtn.addEventListener("click", () => {
+    sidebar.classList.add("open");
+});
+
+closeSidebarBtn.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+});
