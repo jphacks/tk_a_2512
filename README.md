@@ -19,15 +19,25 @@
 ## 開発技術
 ### 活用した技術
 #### API・データ
-* 
+* ・自作API（Flask）
+　- /api/status：プレイヤー・モンスター・ToDoの状態を返す
+　- /api/create_todo：タスクを登録
+　- /api/complete_todo/<id>：タスク達成によりモンスターに攻撃
+・データベース：SQLite + SQLAlchemy
+　- モデル：Player / Todo / Monster
+・ブラウザLocalStorageでHP・経験値・タスクを保持（オフライン対応）
 * 
 
 #### フレームワーク・ライブラリ・モジュール
-* 
+・Flask（Webアプリフレームワーク）
+・SQLAlchemy（ORM）
+・Jinja2（テンプレートエンジン）
+・datetime（期限管理）
+・HTML / CSS / JavaScript（UI・アニメーション制御）
 * 
 
 #### デバイス
-* 
+* PC・スマートフォンのWebブラウザ対応（現時点ではレスポンシブ未実装だが対応可能な設計）
 * 
 
 ### 独自技術
