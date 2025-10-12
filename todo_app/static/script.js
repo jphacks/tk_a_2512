@@ -1,5 +1,7 @@
+// static/script.js (問題修正後の完全版)
+
 // ==== 初期データ ====
-let monsterHP = 0;
+let monsterHP = 0;  
 let monsterMaxHP = 100;
 let isPenaltyActive = false;
 let monsterExists = false;
@@ -7,10 +9,10 @@ let monsterExists = false;
 // プレイヤーのステータス
 let playerLevel = 1;
 let playerExp = 0;
-const EXP_TO_LEVEL_UP = 100;
+const EXP_TO_LEVEL_UP = 100; 
 
-let todos = []; // 初期化時にLocalStorageからロードするため空に
-let historyLog = []; // 履歴データ構造
+let todos = []; 
+let historyLog = []; 
 
 // ==== 要素取得 ====
 const listEl = document.getElementById("todo-list");
@@ -18,16 +20,16 @@ const hpFillEl = document.getElementById("monster-hp-fill");
 const monsterImg = document.getElementById("monster");
 const todoForm = document.getElementById("todo-form");
 const hpBarContainer = document.getElementById("monster-hp-bar");
-const monsterNameEl = document.getElementById("monster-name");
+const monsterNameEl = document.getElementById("monster-name"); 
 
 // プレイヤーのステータス関連要素
 const playerLevelDisplay = document.getElementById("player-level-display");
 const playerExpDisplay = document.getElementById("player-exp-display");
 const playerExpNextDisplay = document.getElementById("player-exp-next-display");
 const xpFillEl = document.getElementById("xp-fill");
-const historyListEl = document.getElementById("history-list"); // 履歴リスト要素
-// ★変更点: 履歴削除ボタンの要素を取得
+const historyListEl = document.getElementById("history-list"); 
 const clearHistoryBtn = document.getElementById("clear-history-btn"); 
+const sortSelectEl = document.getElementById("sort-select"); 
 
 // ==== データ永続化関数 ====
 function saveAllData() {
@@ -38,13 +40,11 @@ function saveAllData() {
 }
 
 function loadAllData() {
-    //  初回起動判定
     const firstRun = localStorage.getItem('firstRun');
 
     if (!firstRun) {
-        //  初回起動時の初期化
-        monsterHP = monsterMaxHP;  // 初回はモンスター満タン
-        monsterExists = false;      // まだ画面には表示しない
+        monsterHP = monsterMaxHP;  
+        monsterExists = false;      
         todos = [
             { title: "本を読む", attack: 10, expReward: 10, done: false, dueDate: "2025-10-12", expired: false }
         ];
@@ -52,10 +52,9 @@ function loadAllData() {
         playerLevel = 1;
         playerExp = 0;
 
-        localStorage.setItem('firstRun', 'done'); // 初回フラグを保存
-        saveAllData(); // 初期値を保存
+        localStorage.setItem('firstRun', 'done'); 
+        saveAllData(); 
     } else {
-        //  前回の状態を復元
         const savedHP = localStorage.getItem('monsterHP');
         monsterHP = savedHP !== null ? parseInt(savedHP) : monsterMaxHP;
 
@@ -73,7 +72,6 @@ function loadAllData() {
         historyLog = savedHistory ? JSON.parse(savedHistory) : [];
     }
 
-    //  モンスター表示判定
     if (monsterHP > 0 && monsterExists) {
         monsterImg.style.display = "block";
     } else {
@@ -86,7 +84,50 @@ function loadAllData() {
 
 function renderTodos() {
     listEl.innerHTML = "";
-    todos.forEach((todo, index) => {
+    
+    let displayTodos = [...todos]; 
+    const sortValue = sortSelectEl ? sortSelectEl.value : 'default';
+
+    switch (sortValue) {
+        case 'difficulty-asc':
+            displayTodos.sort((a, b) => {
+                if (a.done !== b.done) {
+                    return a.done ? 1 : -1; 
+                }
+                // ★修正点: attackがnull/undefinedの場合に0として扱う
+                const attackA = a.attack || 0;
+                const attackB = b.attack || 0;
+                return attackA - attackB;
+            });
+            break;
+        case 'difficulty-desc':
+            displayTodos.sort((a, b) => {
+                if (a.done !== b.done) {
+                    return a.done ? 1 : -1;
+                }
+                // ★修正点: attackがnull/undefinedの場合に0として扱う
+                const attackA = a.attack || 0;
+                const attackB = b.attack || 0;
+                return attackB - attackA;
+            });
+            break;
+        case 'due-date-asc':
+            displayTodos.sort((a, b) => {
+                if (a.done !== b.done) {
+                    return a.done ? 1 : -1;
+                }
+                // ★修正点: 日付がない場合は無限大 (最も遅い) として扱う
+                const dateA = a.dueDate ? new Date(a.dueDate) : Infinity;
+                const dateB = b.dueDate ? new Date(b.dueDate) : Infinity;
+                return dateA - dateB;
+            });
+            break;
+        case 'default':
+        default:
+            break;
+    }
+
+    displayTodos.forEach((todo) => {
         const li = document.createElement("li");
         li.className = "todo-item";
         
@@ -94,7 +135,10 @@ function renderTodos() {
         if (todo.expired && !todo.done) li.classList.add("expired");
         
         li.textContent = `${todo.title}（攻:${todo.attack} / 経験値:${todo.expReward} / 期限:${todo.dueDate}）`;
-        li.onclick = () => completeTask(index);
+        
+        const originalIndex = todos.findIndex(t => t === todo);
+        li.onclick = () => completeTask(originalIndex);
+        
         listEl.appendChild(li);
     });
     saveAllData();
@@ -102,13 +146,13 @@ function renderTodos() {
 
 function updateHPBar() {
     if (!monsterExists) {
-        hpBarContainer.style.display = "none"; // バー非表示
-        monsterImg.style.display = "none";     // 画像非表示
-        monsterNameEl.style.display = "none";  // 名前非表示
+        hpBarContainer.style.display = "none"; 
+        monsterImg.style.display = "none";     
+        monsterNameEl.style.display = "none";  
     } else {
         hpBarContainer.style.display = "block"; 
         monsterImg.style.display = "block";
-        monsterNameEl.style.display = "inline"; // 名前を表示
+        monsterNameEl.style.display = "inline"; 
         const hpPercent = (monsterHP / monsterMaxHP) * 100;
         hpFillEl.style.width = `${hpPercent}%`;
         hpFillEl.style.background = monsterHP <= 0 ? "gray" : "red";
@@ -129,7 +173,7 @@ function updatePlayerStatus() {
 
 function renderHistory() {
     historyListEl.innerHTML = "";
-    // 最新の履歴から表示するために reverse() を使う
+    
     historyLog.slice().reverse().forEach(log => {
         const li = document.createElement("li");
         li.textContent = `[${log.date}] ${log.type === 'TASK' ? 'クエスト達成' : 'モンスター討伐'}: ${log.details}`;
@@ -154,7 +198,6 @@ function levelUp() {
     playerExp = 0;
     alert(`🎉 レベルアップ！Lv.${playerLevel} になった！`);
     
-    // ★履歴記録: モンスター討伐ログ
     historyLog.push({
         date: new Date().toISOString().split('T')[0],
         type: 'MONSTER',
@@ -162,7 +205,7 @@ function levelUp() {
     });
 
     updatePlayerStatus();
-    monsterHP = monsterMaxHP; // HPリセット
+    monsterHP = monsterMaxHP; 
     updateHPBar();
     renderHistory();
 }
@@ -215,7 +258,6 @@ function completeTask(index) {
 
     const expGained = todos[index].expReward; 
 
-    // 完了日時を記録
     todos[index].done = true;
     todos[index].doneDate = new Date().toISOString(); 
     todos[index].expired = false;
@@ -224,13 +266,19 @@ function completeTask(index) {
 
     monsterHP -= todos[index].attack;
     if (monsterHP < 0) monsterHP = 0;
+    
+    historyLog.push({
+        date: new Date().toISOString().split('T')[0],
+        type: 'TASK',
+        details: `「${todos[index].title}」を達成し、モンスターに${todos[index].attack}ダメージを与えた！`
+    });
 
     renderTodos();
     updateHPBar();
     monsterHitAnimation();
     
     checkDeadlines(); 
-    renderHistory();
+    renderHistory(); 
 
     if (monsterHP === 0) {
         setTimeout(() => {
@@ -287,7 +335,6 @@ function addTodo(title, difficulty, dueDate) {
     todos.push(newTodo);
     renderTodos(); 
 
-    //  モンスターがいなければ生成
     if (!monsterExists) {
         createNewMonster();
     }
@@ -301,7 +348,7 @@ function removeOldCompletedTodos() {
             const doneTime = new Date(todo.doneDate);
             const diffHours = (now - doneTime) / 1000 / 60 / 60;
             if (diffHours >= 24) {
-                return false; // 24時間経過したタスクを削除
+                return false; 
             }
         }
         return true;
@@ -311,15 +358,13 @@ function removeOldCompletedTodos() {
 }
 
 
-// ★変更点: 履歴削除機能の追加
 function clearHistory() {
-    // 確認ダイアログを表示
     const confirmed = confirm("本当に達成履歴のデータを全て削除してもよろしいですか？この操作は取り消せません。");
     
     if (confirmed) {
-        historyLog = []; // 履歴データを空にする
-        renderHistory(); // 履歴リストを再描画（空になる）
-        saveAllData(); // LocalStorageに保存
+        historyLog = []; 
+        renderHistory(); 
+        saveAllData(); 
         alert("達成履歴を全て削除しました。");
     }
 }
@@ -346,22 +391,26 @@ todoForm.addEventListener('submit', (e) => {
     }
 });
 
-// ★変更点: 履歴削除ボタンのイベントリスナー追加
+// ソート機能のイベントリスナー
+if (sortSelectEl) {
+    sortSelectEl.addEventListener('change', renderTodos);
+}
+
+// 履歴削除ボタンのイベントリスナー
 if (clearHistoryBtn) {
     clearHistoryBtn.addEventListener('click', clearHistory);
 }
 
 
 // ==== 初期化 ====
-loadAllData(); // ★最重要: 最初にデータをロードする
+loadAllData(); 
 renderTodos();
 updateHPBar();
 updatePlayerStatus(); 
-renderHistory(); // 履歴を初期描画
+renderHistory(); 
 checkDeadlines();
-removeOldCompletedTodos(); // 最初に実行
+removeOldCompletedTodos(); 
 
-// 1時間ごとに自動で削除チェック
 setInterval(removeOldCompletedTodos, 60 * 60 * 1000);
 
 const menuBar = document.getElementById("menu-bar");

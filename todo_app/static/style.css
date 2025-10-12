@@ -44,9 +44,9 @@ body::before {
     display: block;
 }
 
-/* ★追加: プレイヤーステータスエリア */
+/* プレイヤーステータスエリア */
 #player-status {
-    width: 150px; /* HPバーと合わせて調整 */
+    width: 150px; 
     margin-bottom: 5px;
 }
 
@@ -120,10 +120,10 @@ body::before {
     transition: transform 0.2s;
 }
 
-/* ★追加: モンスターペナルティモード */
+/* モンスターペナルティモード */
 #monster.penalty-mode {
-    filter: brightness(0.7) grayscale(0.5); /* 暗く、モノクロに */
-    animation: shake 0.5s infinite; /* 軽く揺らすアニメーション */
+    filter: brightness(0.7) grayscale(0.5); 
+    animation: shake 0.5s infinite; 
 }
 
 @keyframes shake {
@@ -137,6 +137,23 @@ body::before {
 /* ===== ToDoリスト ===== */
 .todo-list {
     margin-bottom: 20px;
+}
+
+/* ソートコントロールのスタイル */
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(230, 230, 230, 0.9);
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.sort-controls label {
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .todo-item {
@@ -186,21 +203,21 @@ button {
     position: fixed;
     top: 0;
     left: 0;
-    width: 33.33%;        /* 開いた時の幅は画面の1/3 */
-    max-width: 300px;      /* 必要に応じて最大幅 */
+    width: 33.33%;       
+    max-width: 300px;     
     height: 100%;
     background-color: rgba(255, 255, 255, 0.95);
     box-shadow: 2px 0 5px rgba(0,0,0,0.3);
     padding: 20px;
     z-index: 1000;
 
-    transform: translateX(-100%); /* 初期は画面外に完全に隠す */
-    transition: transform 0.3s ease; /* スライドアニメーション */
+    transform: translateX(-100%); 
+    transition: transform 0.3s ease; 
 }
 
 /* メニューバーを開いた状態 */
 #menu-bar.open {
-    transform: translateX(0); /* 左からスライドして表示 */
+    transform: translateX(0); 
 }
 
 /* 閉じるボタン */
@@ -239,11 +256,19 @@ button {
 #menu-bar ul li {
     padding: 8px 0;
     border-bottom: 1px solid #ddd;
-    cursor: pointer;
     font-weight: bold;
 }
 
-/* ★変更点: 達成履歴リストのスタイル */
+/* ★修正点: リンク要素にもスタイルを適用 */
+#menu-bar ul li a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+
+/* 達成履歴リストのスタイル */
 .history-list {
     margin-top: 10px;
     padding-left: 20px;
@@ -257,7 +282,7 @@ button {
     border-bottom: 1px dotted #ccc;
 }
 
-/* ★変更点: メニューバー内の削除ボタンのスタイル */
+/* メニューバー内の削除ボタンのスタイル */
 .menu-btn {
     width: 100%;
     padding: 10px;

@@ -11,7 +11,7 @@
         <h2>メニュー</h2>
         <button id="close-menu-bar">&times;</button>
         <ul>
-            <li id="my-page">マイページ</li>
+            <li id="my-page"><a href="mypage.html">マイページ</a></li>
             <li id="settings">設定</li>
             <li><button id="clear-history-btn" class="menu-btn">達成履歴を削除</button></li>
         </ul>
@@ -42,6 +42,17 @@
     </div>
 
     <h2>ToDo一覧</h2>
+    
+    <div class="sort-controls">
+        <label for="sort-select">並び替え:</label>
+        <select id="sort-select">
+            <option value="default">追加順 (デフォルト)</option>
+            <option value="difficulty-asc">難易度 (低い順)</option>
+            <option value="difficulty-desc">難易度 (高い順)</option>
+            <option value="due-date-asc">期限 (早い順)</option>
+        </select>
+    </div>
+
     <div class="todo-list" id="todo-list"></div>
 
     <h2>新しいToDo作成</h2>
