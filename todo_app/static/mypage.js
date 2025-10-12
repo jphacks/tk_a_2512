@@ -6,8 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/status")
     .then(res => res.json())
     .then(data => {
-        // 名前が未設定なら初期名を表示
-        nameEl.textContent = data.player.name || "勇者";
+        // 名前が未設定の場合は初期名「勇者」を表示
+        const playerName = data.player.name && data.player.name.trim() !== "" ? data.player.name : "勇者";
+        nameEl.textContent = playerName;
+    })
+    .catch(() => {
+        // APIが落ちている場合の保険
+        nameEl.textContent = "勇者";
     });
 
 
