@@ -2,6 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const nameEl = document.getElementById("player-name");
     const changeBtn = document.getElementById("change-name-btn");
 
+    let playerName = localStorage.getItem('playerName');
+    if(!playerName) {
+        playerName = "勇者";
+        localStorage.setItem('playerName', playerName);
+    }
+
+    nameEl.textContent = playerName;
+
     const playerLevelDisplay = document.getElementById("player-level-display");
     const playerExpDisplay = document.getElementById("player-exp-display");
     const playerExpNextDisplay = document.getElementById("player-exp-next-display");
@@ -27,16 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }
 
-    // 初期ロード
-    loadPlayerStatus();
+// 初期ロード
+loadPlayerStatus();
 
-    // 1秒ごとに自動更新してリアルタイム同期
-    setInterval(loadPlayerStatus, 1000);
+// 1秒ごとに自動更新してリアルタイム同期
+setInterval(loadPlayerStatus, 1000);
 
-    // --- 名前変更 ---
-    changeBtn.addEventListener("click", async () => {
-        const newName = prompt("新しいプレイヤー名を入力してください：", nameEl.textContent);
-        if (!newName) return;
+// --- 名前変更 ---
+changeBtn.addEventListener("click", async () => {
+    const newName = prompt("新しいプレイヤー名を入力してください：", nameEl.textContent);
+    if (!newName) return;
 
         try {
             const res = await fetch("/api/change_name", {
@@ -48,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.status === "ok") {
                 nameEl.textContent = data.name;
+                localStorage.setItem('playerName', data.name);
                 alert("プレイヤー名を変更しました！");
             } else {
                 alert("名前変更に失敗しました: " + data.message);
