@@ -42,6 +42,10 @@ def get_monster():
 def index():
     return render_template("todo.html")
 
+@app.route("/mypage")
+def mypage():
+    return render_template("mypage.html")
+
 # --- API: プレイヤー情報取得 ---
 @app.route("/api/status")  #status API
 def get_status():
