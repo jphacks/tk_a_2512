@@ -1,14 +1,15 @@
 from flask import Flask, jsonify, render_template, request
 from models import db, Player, Todo, Monster
 from datetime import date
+import os
 
 app = Flask(__name__)
 
-# --- SQLite データベース設定 ---
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+# --- PostgreSQL 対応 ---
+# Render では DATABASE_URL、ローカルでは SQLite fallback
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# --- モデルとアプリを関連付け ---
 db.init_app(app)
 
 # --- 初回起動時にデータベースを作成 ---
@@ -16,12 +17,10 @@ with app.app_context():
     db.create_all()
     player = Player.query.first()
     if not player:
-        # プレイヤーが存在しなければ作成
         player = Player(name="勇者")
         db.session.add(player)
         db.session.commit()
     elif not player.name or player.name.strip() == "":
-        # 名前が空の場合、初期名を設定
         player.name = "勇者"
         db.session.commit()
 
@@ -30,12 +29,10 @@ with app.app_context():
 def get_monster():
     monster = Monster.query.first()
     if not monster:
-        # 初回起動時にモンスター作成
         monster = Monster(name="モンスター", hp=100)
         db.session.add(monster)
         db.session.commit()
     elif monster.hp <= 0:
-        # 倒されたモンスターを再生成
         db.session.delete(monster)
         db.session.commit()
         monster = Monster(name="モンスター", hp=100)
@@ -53,7 +50,7 @@ def mypage():
     return render_template("mypage.html")
 
 # --- API: プレイヤー情報取得 ---
-@app.route("/api/status")  #status API
+@app.route("/api/status")
 def get_status():
     player = Player.query.first()
     monster = get_monster()
@@ -64,7 +61,7 @@ def get_status():
         "todos": [{"id": t.id, "title": t.title, "attack_power": t.attack_power, "done": t.done} for t in todos]
     })
 
-# プレイヤー名変更API
+# --- プレイヤー名変更API ---
 @app.route("/api/change_name", methods=["POST"])
 def change_name():
     data = request.json
@@ -116,7 +113,6 @@ def complete_todo(todo_id):
 
     if monster.hp == 0:
         player.level += 1
-        # 新しいモンスター生成
         db.session.delete(monster)
         db.session.commit()
         new_monster = Monster(name="モンスター", hp=100)
